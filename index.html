@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pattern – Brand Sample Tracker</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f6fa;
+  --white: #ffffff;
+  --border: #e4e7ef;
+  --accent: #5046e5;
+  --accent2: #7c73f3;
+  --accent-light: #eceafd;
+  --text: #111827;
+  --muted: #6b7280;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --yellow: #d97706;
+  --yellow-bg: #fffbeb;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,.14);
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+h1,h2,h3,h4 { line-height: 1.3; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; font-size: 14px; }
+
+/* HEADER */
+.header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 62px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 0 var(--border); }
+.header-left { display: flex; align-items: center; gap: 14px; }
+.logo { background: var(--accent); color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px; padding: 5px 10px; border-radius: 6px; }
+.header-title { font-size: 16px; font-weight: 700; }
+.header-date { font-size: 13px; color: var(--muted); }
+
+/* MAIN */
+.main { max-width: 1080px; margin: 0 auto; padding: 32px 20px 60px; }
+
+/* SECTION LABEL */
+.section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+
+/* BRAND GRID */
+.brand-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+@media (max-width: 680px) { .brand-grid { grid-template-columns: repeat(2, 1fr); } }
+.brand-card {
+  background: var(--white); border: 2px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; cursor: pointer; position: relative; user-select: none;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+.brand-card:hover { border-color: var(--accent2); box-shadow: var(--shadow); transform: translateY(-1px); }
+.brand-card.active { border-color: var(--accent); background: var(--accent-light); }
+.brand-card-num { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 3px; }
+.brand-card-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.brand-card-meta { font-size: 11px; color: var(--muted); }
+.new-badge { position: absolute; top: 10px; right: 10px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; letter-spacing: .3px; }
+
+/* CONTENT PANEL */
+.content-panel { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.panel-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.panel-title { font-size: 18px; font-weight: 700; }
+.panel-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); padding: 0 20px; background: var(--white); }
+.tab-btn { background: none; border: none; padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; white-space: nowrap; }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+/* TAB PANE */
+.tab-pane { display: none; padding: 24px; }
+.tab-pane.active { display: block; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; transition: background .15s, transform .1s; }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #3d32d4; }
+.btn-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+.btn-danger:hover { background: #fee2e2; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* UPLOAD ZONE */
+.upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 44px 20px; text-align: center; transition: border-color .2s, background .2s; cursor: pointer; position: relative; }
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
+.upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-icon { font-size: 38px; margin-bottom: 12px; }
+.upload-label { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.upload-sub { font-size: 13px; color: var(--muted); }
+
+/* UPLOAD HISTORY */
+.history-list { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.history-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); font-size: 13px; }
+.history-left { display: flex; align-items: center; gap: 10px; }
+.h-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+.history-name { font-weight: 500; }
+.history-meta { color: var(--muted); font-size: 12px; }
+.history-count { color: var(--green); font-weight: 700; }
+
+/* REPORT CONTROLS */
+.report-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; justify-content: space-between; }
+.range-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.range-pill { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--border); background: var(--white); color: var(--muted); cursor: pointer; transition: all .15s; }
+.range-pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+@media (max-width: 500px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+.stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+.stat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 6px; }
+.stat-val { font-size: 30px; font-weight: 800; }
+.stat-val.green { color: var(--green); }
+.stat-val.accent { color: var(--accent); }
+.stat-val.dark { color: var(--text); }
+
+/* PRODUCT TABLE */
+.table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+.product-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+.product-table th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); background: var(--bg); border-bottom: 1px solid var(--border); }
+.product-table td { padding: 13px 16px; border-bottom: 1px solid var(--bg); font-size: 14px; }
+.product-table tr:last-child td { border-bottom: none; }
+.product-table tbody tr:hover td { background: #f9fafb; }
+.prod-name { font-weight: 600; font-size: 14px; }
+.prod-full { font-size: 11px; color: var(--muted); margin-top: 2px; max-width: 300px; }
+.count-cell { font-size: 18px; font-weight: 800; text-align: center; }
+.count-cell.has { color: var(--green); }
+.count-cell.none { color: #d1d5db; }
+.badge-approved { display: inline-block; background: var(--green-bg); color: var(--green); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .3px; }
+.badge-none { font-size: 12px; color: #d1d5db; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-icon { font-size: 52px; margin-bottom: 16px; }
+.empty-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.empty-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ALERT */
+.alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+.alert-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.alert-warn { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #fde68a; }
+.alert-success { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+
+/* STATUS TAGS */
+.status-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.status-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--white); font-size: 13px; cursor: pointer; user-select: none; transition: all .15s; }
+.status-tag.on { background: var(--green-bg); border-color: var(--green); color: var(--green); font-weight: 600; }
+.s-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* MANAGE */
+.manage-section { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.manage-section:last-child { border-bottom: none; padding-bottom: 0; }
+.manage-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.manage-desc { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+/* MODAL */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.48); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.overlay.show { opacity: 1; pointer-events: all; }
+.modal { background: var(--white); border-radius: 16px; box-shadow: var(--shadow-lg); width: 100%; max-width: 640px; max-height: 85vh; overflow-y: auto; transform: translateY(24px); transition: transform .2s; }
+.overlay.show .modal { transform: translateY(0); }
+.modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 16px; font-weight: 700; }
+.modal-x { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; line-height: 1; padding: 4px 6px; border-radius: 6px; }
+.modal-x:hover { background: var(--bg); }
+.modal-body { padding: 24px; }
+.modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+@media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; }
+.field select, .field input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--text); transition: border-color .15s; }
+.field select:focus, .field input:focus { outline: none; border-color: var(--accent); }
+.field-hint { font-size: 11px; color: var(--muted); }
+
+/* CSV PREVIEW */
+.csv-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 20px; max-height: 140px; overflow-y: auto; }
+.csv-preview table { min-width: 100%; border-collapse: collapse; font-size: 12px; }
+.csv-preview th { background: #e8eaf0; padding: 6px 10px; text-align: left; font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+.csv-preview td { padding: 5px 10px; border-top: 1px solid var(--border); white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; background: #1f2937; color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 2000; transform: translateY(80px); opacity: 0; transition: transform .3s, opacity .3s; max-width: 300px; box-shadow: var(--shadow-lg); }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--green); }
+.toast.error { background: var(--red); }
+
+/* TOGGLE SWITCH */
+.toggle { position: relative; display: inline-block; width: 44px; height: 26px; flex-shrink:0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--border); border-radius: 26px; transition: background .2s; }
+.toggle-slider::before { content:''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* FOOTER */
+.footer { text-align: center; padding: 32px 20px 16px; font-size: 12px; color: #c0c4d0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <span class="logo">PATTERN</span>
+    <span class="header-title">Brand Sample Tracker</span>
+  </div>
+  <span class="header-date" id="hDate"></span>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="section-label">Choose a Brand</div>
+  <div class="brand-grid" id="brandGrid"></div>
+
+  <div class="content-panel" id="contentPanel">
+    <div class="empty">
+      <div class="empty-icon">👆</div>
+      <div class="empty-title">Select a brand to get started</div>
+      <div class="empty-desc">Choose one of your brands above to upload CSV order data<br>and view your weekly sample approval report.</div>
+    </div>
+  </div>
+</main>
+
+<div class="footer">Pattern Brand Sample Tracker &middot; Data lives in your browser &middot; Works offline</div>
+
+<!-- COLUMN MAPPING MODAL -->
+<div class="overlay" id="mapOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">📋 Map Your CSV Columns</span>
+      <button class="modal-x" onclick="closeOverlay()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-info" id="mapBrandAlert"></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+        Found <strong id="csvRowCount">0</strong> data rows. Tell us which columns contain the key fields.
+      </p>
+      <div class="csv-preview" id="csvPreview"></div>
+      <div class="form-grid">
+        <div class="field">
+          <label>📅 Date Column <span style="color:var(--red)">*</span></label>
+          <select id="mapDate" onchange="refreshStatusTags()"></select>
+          <span class="field-hint">Order or approval date</span>
+        </div>
+        <div class="field">
+          <label>📦 Product Name Column <span style="color:var(--red)">*</span></label>
+          <select id="mapProduct"></select>
+          <span class="field-hint">Product or item title</span>
+        </div>
+        <div class="field">
+          <label>✅ Status Column <span style="color:var(--red)">*</span></label>
+          <select id="mapStatus" onchange="refreshStatusTags()"></select>
+          <span class="field-hint">Order / sample status</span>
+        </div>
+        <div class="field">
+          <label>🔢 Quantity Column <span style="color:var(--muted)">(optional)</span></label>
+          <select id="mapQty"></select>
+          <span class="field-hint">Units — defaults to 1 if skipped</span>
+        </div>
+        <div class="field">
+          <label>👤 Username / Creator <span style="color:var(--muted)">(optional)</span></label>
+          <select id="mapUsername"></select>
+          <span class="field-hint">TikTok handle or creator name</span>
+        </div>
+        <div class="field">
+          <label>💲 Price / Cost Column <span style="color:var(--muted)">(optional)</span></label>
+          <select id="mapPrice"></select>
+          <span class="field-hint">Used in export cost totals</span>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>🏷️ Product ID Column <span style="color:var(--muted)">(optional)</span></label>
+          <select id="mapProdId"></select>
+          <span class="field-hint">SKU, ASIN, or product code — shown in export</span>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Which statuses count as "Approved"? <span style="color:var(--red)">*</span></label>
+        <span class="field-hint" style="margin-bottom:6px">Click to toggle green = approved</span>
+        <div class="status-tags" id="statusTags"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeOverlay()">Cancel</button>
+      <button class="btn btn-primary" onclick="doImport()">Import Data →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   BRAND & PRODUCT CONFIG
+   ============================================================ */
+const BRANDS = [
+  { id:'snackworks',   name:'Snackworks',           isNew:false },
+  { id:'urban-decay',  name:'Urban Decay',           isNew:false },
+  { id:'host-defense', name:'Host Defense',          isNew:true  },
+  { id:'coco-eve',     name:'Coco & Eve',            isNew:false },
+  { id:'ballboyz',     name:'BallBoyz Soap',         isNew:false },
+  { id:'betterdog',    name:'Betterdog Supplements', isNew:false },
+];
+
+const PRODUCTS = {
+  'snackworks': [
+    { short:'Sour Patch Original',  full:'Sour Patch Kids Original Variety Pack',             kw:['sour patch','original'],          ex:['fruits','fruit variety'] },
+    { short:'Sour Patch Fruits',    full:'Sour Patch Kids Fruits Variety Pack',                kw:['sour patch','fruits','fruit variety'], ex:[] },
+  ],
+  'urban-decay': [
+    { short:'24/7 Eyeliner',        full:'Urban Decay 24/7 Glide-On Waterproof Eyeliner Pencil',          kw:['24/7','glide','eyeliner','pencil'], ex:[] },
+    { short:'All Nighter Spray',    full:'Urban Decay All Nighter Waterproof Setting Spray',               kw:['all nighter','setting spray'],     ex:['matte','glow','niacinamide','dewy','oil control'] },
+    { short:'Lip Toy Oil',          full:'Urban Decay Lip Toy Stained Glossing Oil',                       kw:['lip toy','glossing oil','lip stain'],ex:[] },
+    { short:'All Nighter Matte',    full:'Urban Decay All Nighter Matte Waterproof Setting Spray',         kw:['all nighter','matte','oil control'],ex:[] },
+    { short:'All Nighter Glow',     full:'Urban Decay All Nighter Glow Waterproof Setting Spray',          kw:['all nighter','glow','niacinamide','dewy'],ex:[] },
+    { short:'Tube Job Mascara',     full:'Urban Decay Tube Job Lash Augmenting Tubing Mascara',            kw:['tube job','mascara','tubing'],     ex:[] },
+  ],
+  'host-defense': [],
+  'coco-eve': [
+    { short:'Glowcation Set',       full:'Glowcation Set',                                    kw:['glowcation'],              ex:[], target:500 },
+    { short:'Body Oil SPF45',       full:'Tan Boosting Anti-Aging Body Oil SPF45',            kw:['spf45','spf 45'],          ex:['spf20','spf 20','spf50','spf 50','highlighter'], target:300 },
+    { short:'Body Oil SPF20',       full:'Tan Boosting Anti-Aging Body Oil SPF20',            kw:['spf20','spf 20'],          ex:['spf45','spf 45','spf50','spf 50','highlighter'], target:300 },
+    { short:'Highlighter SPF50',    full:'Highlighter Body SPF50',                            kw:['highlighter','spf50','spf 50'],ex:[], target:200 },
+  ],
+  'ballboyz': [
+    { short:'Honey Face Scrub',     full:'Ballboyz & Ballgirlz Natural Honey Face Scrub',     kw:['ballboy','ballgirl','honey','face scrub','clay exfoliant'], ex:[] },
+  ],
+  'betterdog': [
+    { short:'Skin Magic',           full:'Skin Magic – Dog Skin, Coat & Hydration Support | By Cesar Millan',        kw:['skin magic','hydration support'], ex:['allergy'] },
+    { short:'Allergy Balance',      full:'Allergy Balance – Dog Skin, Coat & Seasonal Wellness Support | By Cesar Millan', kw:['allergy balance','allergy','seasonal wellness'], ex:[] },
+  ],
+};
+
+/* ============================================================
+   LOCAL STORAGE DB
+   ============================================================ */
+const DB = {
+  KEY: 'pst_v2',
+  read()  { try { return JSON.parse(localStorage.getItem(this.KEY)) || {}; } catch { return {}; } },
+  write(d){ localStorage.setItem(this.KEY, JSON.stringify(d)); },
+  orders(id)  { return this.read()[id]?.orders  || []; },
+  uploads(id) { return this.read()[id]?.uploads || []; },
+  add(id, orders, meta) {
+    const db = this.read();
+    if (!db[id]) db[id] = { orders:[], uploads:[] };
+    db[id].orders.push(...orders);
+    db[id].uploads.push(meta);
+    this.write(db);
+  },
+  clearBrand(id) { const db = this.read(); delete db[id]; this.write(db); },
+  clearAll()     { localStorage.removeItem(this.KEY); },
+  count(id)      { return this.orders(id).length; },
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const FLOOR_DATE = new Date('2026-06-01T00:00:00'); // earliest date across all brands
+
+let S = {
+  brand: null,
+  tab: 'report',
+  range: 'last7',
+  approvedStatuses: {}, // id → Set<string lowercase>
+  allApproved: {},      // id → boolean (skip status filter entirely)
+  pendingCSV: null,     // { rows, headers, brandId, filename }
+};
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('hDate').textContent =
+    new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  renderGrid();
+});
+
+/* ============================================================
+   BRAND GRID
+   ============================================================ */
+function renderGrid() {
+  document.getElementById('brandGrid').innerHTML = BRANDS.map(b => {
+    const n = DB.count(b.id);
+    const ups = DB.uploads(b.id);
+    const last = ups.length ? ups[ups.length-1] : null;
+    return `
+      <div class="brand-card ${S.brand===b.id?'active':''}" onclick="pickBrand('${b.id}')">
+        ${b.isNew ? '<span class="new-badge">NEW</span>' : ''}
+        <div class="brand-card-num">${n.toLocaleString()}</div>
+        <div class="brand-card-name">${b.name}</div>
+        <div class="brand-card-meta">
+          ${n===0 ? 'No data uploaded' : `${n.toLocaleString()} order${n!==1?'s':''}`}
+          ${last ? ` &middot; ${fmtDate(last.date)}` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   BRAND SELECTION & PANEL
+   ============================================================ */
+function pickBrand(id) { S.brand = id; S.tab='report'; renderGrid(); renderPanel(); }
+
+function renderPanel() {
+  const b = BRANDS.find(x => x.id === S.brand);
+  const prods = PRODUCTS[S.brand] || [];
+  document.getElementById('contentPanel').innerHTML = `
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">${b.name}</div>
+        <div class="panel-sub">${DB.count(b.id).toLocaleString()} orders in database &middot; ${prods.length} tracked sample product${prods.length!==1?'s':''}</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary btn-sm" onclick="triggerUpload()">↑ Upload CSV</button>
+        <input id="csvInput" type="file" accept=".csv" style="display:none" onchange="onFileInput(event)">
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn ${S.tab==='report'?'active':''}"  onclick="switchTab('report')">📊 Weekly Report</button>
+      <button class="tab-btn ${S.tab==='upload'?'active':''}"  onclick="switchTab('upload')">📁 Upload History</button>
+      <button class="tab-btn ${S.tab==='manage'?'active':''}"  onclick="switchTab('manage')">⚙️ Manage Data</button>
+    </div>
+    <div id="tabReport" class="tab-pane ${S.tab==='report'?'active':''}"> ${buildReport()} </div>
+    <div id="tabUpload" class="tab-pane ${S.tab==='upload'?'active':''}"> ${buildUploadTab()} </div>
+    <div id="tabManage" class="tab-pane ${S.tab==='manage'?'active':''}"> ${buildManageTab()} </div>`;
+  bindUploadZone();
+}
+
+function switchTab(t) { S.tab=t; renderPanel(); }
+
+/* ============================================================
+   REPORT
+   ============================================================ */
+function buildReport() {
+  const prods = PRODUCTS[S.brand] || [];
+  if (!prods.length) return `
+    <div class="empty">
+      <div class="empty-icon">🔧</div>
+      <div class="empty-title">No Sample Products Configured</div>
+      <div class="empty-desc">Sample products for this brand haven't been set up yet.<br>Reach out to update the tracker configuration.</div>
+    </div>`;
+
+  const orders = DB.orders(S.brand);
+  if (!orders.length) return `
+    ${rangePills()}
+    <div class="empty">
+      <div class="empty-icon">📂</div>
+      <div class="empty-title">No Data Yet</div>
+      <div class="empty-desc">Upload a CSV to start tracking approvals for ${BRANDS.find(x=>x.id===S.brand).name}.</div>
+    </div>`;
+
+  const { start, end, label } = dateRange();
+  const inRange = orders.filter(o => { const d=new Date(o.date); return d>=start && d<=end; });
+  const appSet = S.approvedStatuses[S.brand] || new Set();
+  const allAp  = S.allApproved[S.brand] || false;
+  const approved = inRange.filter(o =>
+    allAp ? true : (appSet.size===0 ? likelyApproved(o.status) : appSet.has((o.status||'').toLowerCase()))
+  );
+
+  const counts = {};
+  prods.forEach(p => { counts[p.short] = { count:0, qty:0, p }; });
+  const otherProds = {}; // product name → { count, qty }
+  approved.forEach(o => {
+    const m = matchProd(o.product, prods);
+    if (m) { counts[m.short].count++; counts[m.short].qty += (parseInt(o.quantity)||1); }
+    else {
+      const key = o.product || 'Unknown';
+      if (!otherProds[key]) otherProds[key] = { count:0, qty:0 };
+      otherProds[key].count++;
+      otherProds[key].qty += (parseInt(o.quantity)||1);
+    }
+  });
+  const otherEntries = Object.entries(otherProds).sort((a,b)=>b[1].count-a[1].count);
+
+  const totalApp = approved.length;
+  const totalQty = approved.reduce((s,o)=>s+(parseInt(o.quantity)||1),0);
+  const prodsWithApprovals = Object.values(counts).filter(c=>c.count>0).length;
+  const autoDetect = !allAp && appSet.size===0 && orders.length>0;
+
+  return `
+    <div class="report-controls">
+      ${rangePills()}
+      <button class="btn btn-secondary btn-sm" onclick="exportReport()">↓ Export CSV</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">
+      ${label} &middot; ${inRange.length} orders in range
+      ${autoDetect ? ' &middot; <span style="color:var(--yellow)">⚠️ Using auto-detect for approvals — configure statuses in Manage Data</span>' : ''}
+    </p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-label">Approved Samples</div><div class="stat-val green">${totalApp}</div></div>
+      <div class="stat-box"><div class="stat-label">Total Units</div><div class="stat-val accent">${totalQty}</div></div>
+      <div class="stat-box"><div class="stat-label">Products w/ Approvals</div><div class="stat-val dark">${prodsWithApprovals}<span style="font-size:16px;font-weight:500;color:var(--muted)"> / ${prods.length}</span></div></div>
+    </div>
+    <div class="table-wrap">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Sample Product</th>
+            <th style="text-align:center">Approved</th>
+            <th style="text-align:center">Units</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${prods.map(p => {
+            const d = counts[p.short];
+            return `<tr>
+              <td>
+                <div class="prod-name">${p.short}</div>
+                <div class="prod-full">${p.full}</div>
+              </td>
+              <td class="count-cell ${d.count>0?'has':'none'}">${d.count}</td>
+              <td style="text-align:center;color:var(--muted);font-weight:500">${d.qty||'—'}</td>
+              <td>${d.count>0 ? '<span class="badge-approved">✓ Approved</span>' : '<span class="badge-none">—</span>'}</td>
+            </tr>`;
+          }).join('')}
+          ${otherEntries.length>0 ? `
+            <tr>
+              <td colspan="4" style="padding:8px 16px;background:#f3f4f6;border-top:2px solid var(--border)">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Other Approved Products</span>
+                <span style="font-size:11px;color:var(--muted);margin-left:8px">— not in your tracked sampling list</span>
+              </td>
+            </tr>
+            ${otherEntries.map(([name, d]) => `
+            <tr style="background:#fafafa">
+              <td>
+                <div class="prod-name" style="color:#374151;font-weight:500">${name}</div>
+              </td>
+              <td class="count-cell has" style="color:#374151">${d.count}</td>
+              <td style="text-align:center;color:var(--muted);font-weight:500">${d.qty||'—'}</td>
+              <td><span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:20px;font-weight:600">other</span></td>
+            </tr>`).join('')}
+          ` : ''}
+        </tbody>
+      </table>
+    </div>
+    ${totalApp===0 ? '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No approved samples found in this date range. Try a wider range or check your status config.</div>' : ''}`;
+}
+
+function rangePills() {
+  return `<div class="range-pills">
+    ${[['last7','Last 7 days'],['thisWeek','This week'],['last30','Last 30 days'],['all','All time']].map(
+      ([id,lbl]) => `<button class="range-pill ${S.range===id?'active':''}" onclick="setRange('${id}')">${lbl}</button>`
+    ).join('')}
+  </div>`;
+}
+
+function setRange(r) { S.range=r; renderPanel(); }
+
+function dateRange() {
+  const now   = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const end   = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+  const floor = new Date(FLOOR_DATE); // Jun 1, 2026 — earliest allowed start
+
+  const clamp = d => d < floor ? new Date(floor) : d;
+
+  switch (S.range) {
+    case 'last7': {
+      const raw = new Date(today); raw.setDate(raw.getDate()-6);
+      const s = clamp(raw);
+      return {start:s, end, label:`Last 7 days (${fmtDate(s)} – ${fmtDate(end)})`};
+    }
+    case 'thisWeek': {
+      const raw = new Date(today); const day=raw.getDay(); raw.setDate(raw.getDate()+(day===0?-6:1-day));
+      const s = clamp(raw);
+      return {start:s, end, label:`This week (${fmtDate(s)} – ${fmtDate(end)})`};
+    }
+    case 'last30': {
+      const s = new Date(floor); // always Jun 1 (floor) → today
+      return {start:s, end, label:`Since Jun 1 (${fmtDate(s)} – ${fmtDate(end)})`};
+    }
+    default: // all time
+      return {start: new Date(floor), end, label:`All time from ${fmtDate(floor)}`};
+  }
+}
+
+/* ============================================================
+   UPLOAD TAB
+   ============================================================ */
+function buildUploadTab() {
+  const uploads = DB.uploads(S.brand);
+  return `
+    <div class="upload-zone" id="uZone">
+      <input type="file" accept=".csv" onchange="onFileInput(event)">
+      <div class="upload-icon">📊</div>
+      <div class="upload-label">Drop your CSV here, or click to browse</div>
+      <div class="upload-sub">Accepts .csv files &middot; You'll map columns in the next step</div>
+    </div>
+    ${uploads.length ? `
+      <div class="section-label" style="margin-top:22px">Upload History</div>
+      <div class="history-list">
+        ${[...uploads].reverse().map(u=>`
+          <div class="history-item">
+            <div class="history-left">
+              <div class="h-dot"></div>
+              <div>
+                <div class="history-name">${u.filename}</div>
+                <div class="history-meta">Uploaded ${fmtDateTime(u.date)} &middot; ${u.rows.toLocaleString()} rows imported</div>
+              </div>
+            </div>
+            <div class="history-count">+${u.rows.toLocaleString()}</div>
+          </div>`).join('')}
+      </div>` : ''}`;
+}
+
+function bindUploadZone() {
+  const z = document.getElementById('uZone');
+  if (!z) return;
+  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('dragover'); });
+  z.addEventListener('dragleave', () => z.classList.remove('dragover'));
+  z.addEventListener('drop', e => {
+    e.preventDefault(); z.classList.remove('dragover');
+    const f = e.dataTransfer.files[0];
+    if (f?.name.endsWith('.csv')) readFile(f);
+    else showToast('Please drop a .csv file', 'error');
+  });
+}
+
+/* ============================================================
+   MANAGE TAB
+   ============================================================ */
+function buildManageTab() {
+  const orders = DB.orders(S.brand);
+  const appSet = S.approvedStatuses[S.brand] || new Set();
+  const allStatuses = [...new Set(orders.map(o=>o.status).filter(Boolean))].sort();
+  const brandName = BRANDS.find(x=>x.id===S.brand).name;
+
+  return `
+    <div class="manage-section">
+      <div class="manage-title">⚡ All Orders = Approved Samples</div>
+      <div class="manage-desc">Turn this ON if your CSV contains only approved samples with no status column (e.g. a TikTok Shop sample export where every row is already approved). All uploaded rows will count toward the report.</div>
+      <label style="display:inline-flex;align-items:center;gap:12px;cursor:pointer;margin-top:4px">
+        <div class="toggle">
+          <input type="checkbox" ${S.allApproved[S.brand]?'checked':''} onchange="toggleAllApproved(this.checked)">
+          <span class="toggle-slider"></span>
+        </div>
+        <span style="font-size:14px;font-weight:600;color:${S.allApproved[S.brand]?'var(--green)':'var(--muted)'}">
+          ${S.allApproved[S.brand] ? '✓ ON — All rows treated as approved' : 'OFF — Using status column filter'}
+        </span>
+      </label>
+    </div>
+
+    <div class="manage-section">
+      <div class="manage-title">✅ Approved Status Configuration</div>
+      <div class="manage-desc">Select which CSV status values count as an approved sample for ${brandName}. ${S.allApproved[S.brand]?'<em>(Ignored while "All Orders = Approved" is ON)</em>':''}</div>
+      ${allStatuses.length===0
+        ? '<div class="alert alert-info">Upload a CSV first to configure status values.</div>'
+        : `<div class="status-tags">
+            ${allStatuses.map(s => {
+              const on = appSet.has(s.toLowerCase());
+              return `<span class="status-tag ${on?'on':''}" onclick="toggleStatus('${s.replace(/'/g,"\\'")}', this)">
+                <span class="s-dot"></span>${s}
+              </span>`;
+            }).join('')}
+          </div>
+          <div class="field-hint" style="margin-top:8px">Green = counts as approved sample</div>`}
+    </div>
+
+    <div class="manage-section">
+      <div class="manage-title">🎯 Sample Targets</div>
+      <div class="manage-desc">Set cumulative sample targets per product. These appear in the export report to track progress (like the "Target" column in your Coco & Eve tracker).</div>
+      ${(PRODUCTS[S.brand]||[]).length===0
+        ? '<div class="alert alert-info">No tracked products configured for this brand yet.</div>'
+        : `<div style="display:flex;flex-direction:column;gap:10px">
+            ${(PRODUCTS[S.brand]||[]).map(p => {
+              const tgts = getTargets(S.brand);
+              const tgt = tgts[p.short] || '';
+              return `<div style="display:flex;align-items:center;gap:12px">
+                <div style="flex:1;font-size:13px;font-weight:500">${p.short}</div>
+                <div style="font-size:11px;color:var(--muted);flex:1">${p.full}</div>
+                <input type="number" min="0" placeholder="No target"
+                  value="${tgt}"
+                  style="width:110px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;text-align:right"
+                  onchange="saveTargetUI('${p.short.replace(/'/g,"\\'")}', this.value)">
+              </div>`;
+            }).join('')}
+          </div>`}
+    </div>
+
+    <div class="manage-section">
+      <div class="manage-title">📊 Database Info</div>
+      <div class="manage-desc">
+        <strong>${orders.length.toLocaleString()}</strong> orders stored for ${brandName}.<br>
+        <span style="color:var(--muted)">Stored in your browser's localStorage — stays between sessions on this device.</span>
+      </div>
+    </div>
+
+    <div class="manage-section">
+      <div class="manage-title">🗑️ Clear Brand Data</div>
+      <div class="manage-desc">Remove all uploaded orders for ${brandName}. Cannot be undone.</div>
+      <button class="btn btn-danger btn-sm" onclick="clearBrand()">Clear ${brandName} Data</button>
+    </div>`;
+}
+
+function toggleAllApproved(val) {
+  S.allApproved[S.brand] = val;
+  renderPanel(); // re-render so the label and report update
+}
+
+function toggleStatus(status, el) {
+  if (!S.approvedStatuses[S.brand]) S.approvedStatuses[S.brand] = new Set();
+  const k = status.toLowerCase();
+  if (S.approvedStatuses[S.brand].has(k)) { S.approvedStatuses[S.brand].delete(k); el.classList.remove('on'); }
+  else { S.approvedStatuses[S.brand].add(k); el.classList.add('on'); }
+}
+
+function clearBrand() {
+  const name = BRANDS.find(x=>x.id===S.brand).name;
+  if (!confirm(`Clear ALL data for ${name}? This cannot be undone.`)) return;
+  DB.clearBrand(S.brand);
+  delete S.approvedStatuses[S.brand];
+  renderGrid(); renderPanel();
+  showToast(`${name} data cleared`);
+}
+
+/* ============================================================
+   FILE UPLOAD
+   ============================================================ */
+function triggerUpload() {
+  const inp = document.getElementById('csvInput');
+  if (inp) { inp.click(); return; }
+  const t = document.createElement('input');
+  t.type='file'; t.accept='.csv';
+  t.onchange=onFileInput; t.click();
+}
+
+function onFileInput(e) { const f=e.target.files[0]; if(f) readFile(f); }
+
+function readFile(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    const rows = parseCSV(e.target.result);
+    if (rows.length < 2) { showToast('CSV appears empty', 'error'); return; }
+    const headers = rows[0];
+    const data = rows.slice(1).filter(r => r.some(c=>c.trim()));
+    S.pendingCSV = { rows:data, headers, brandId:S.brand, filename:file.name };
+    openMapModal(headers, data);
+  };
+  r.readAsText(file);
+}
+
+/* ============================================================
+   CSV PARSER
+   ============================================================ */
+function parseCSV(text) {
+  const rows=[]; let row=[], field='', inQ=false;
+  const push = () => { row.push(field.trim()); field=''; };
+  for (let i=0; i<text.length; i++) {
+    const c=text[i];
+    if (c==='"') { if (inQ && text[i+1]==='"') { field+='"'; i++; } else inQ=!inQ; }
+    else if (c===',' && !inQ) push();
+    else if ((c==='\n'||c==='\r') && !inQ) {
+      if (c==='\r' && text[i+1]==='\n') i++;
+      push();
+      if (row.some(f=>f)) rows.push(row);
+      row=[];
+    } else field+=c;
+  }
+  push(); if (row.some(f=>f)) rows.push(row);
+  return rows;
+}
+
+/* ============================================================
+   MAPPING MODAL
+   ============================================================ */
+function openMapModal(headers, rows) {
+  const b = BRANDS.find(x=>x.id===S.pendingCSV.brandId);
+  document.getElementById('mapBrandAlert').textContent = `Importing for: ${b.name} · ${S.pendingCSV.filename}`;
+  document.getElementById('csvRowCount').textContent = rows.length.toLocaleString();
+
+  // Preview
+  const prev = rows.slice(0,3);
+  document.getElementById('csvPreview').innerHTML = `<table>
+    <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${prev.map(r=>`<tr>${headers.map((_,i)=>`<td>${r[i]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table>`;
+
+  const opts = headers.map((h,i)=>`<option value="${i}">${h}</option>`).join('');
+  const skipOpt = '<option value="">— Skip —</option>';
+  ['mapDate','mapProduct','mapStatus'].forEach(id => document.getElementById(id).innerHTML = opts);
+  ['mapQty','mapUsername','mapPrice','mapProdId'].forEach(id => document.getElementById(id).innerHTML = skipOpt + opts);
+
+  // Auto-select best columns
+  const auto = (elId, kws) => {
+    const idx = headers.findIndex(h => kws.some(k => h.toLowerCase().includes(k)));
+    if (idx>=0) document.getElementById(elId).value = idx;
+  };
+  auto('mapDate',     ['date','time','created','ordered','approval']);
+  auto('mapProduct',  ['product','item','title','name','sku','asin','listing']);
+  auto('mapStatus',   ['status','state','approval','sample status']);
+  auto('mapQty',      ['qty','quantity','count','units','amount','free-sample','free sample']);
+  auto('mapUsername', ['username','creator','handle','user','author','tiktok']);
+  auto('mapPrice',    ['price','cost','value','amount','$']);
+  auto('mapProdId',   ['product id','productid','sku','asin','item id','prod id','id']);
+
+  refreshStatusTags();
+  document.getElementById('mapOverlay').classList.add('show');
+}
+
+function refreshStatusTags() {
+  if (!S.pendingCSV) return;
+  const idx = parseInt(document.getElementById('mapStatus').value) || 0;
+  const statuses = [...new Set(S.pendingCSV.rows.map(r=>r[idx]).filter(Boolean))].sort();
+  const saved = S.approvedStatuses[S.pendingCSV.brandId] || new Set();
+  document.getElementById('statusTags').innerHTML = statuses.map(s => {
+    const on = saved.has(s.toLowerCase()) || (saved.size===0 && likelyApproved(s));
+    return `<span class="status-tag ${on?'on':''}" onclick="this.classList.toggle('on')">\
+      <span class="s-dot"></span>${s}</span>`;
+  }).join('') || '<span style="color:var(--muted);font-size:13px">No status values found — check your column selection.</span>';
+}
+
+function closeOverlay() {
+  document.getElementById('mapOverlay').classList.remove('show');
+  S.pendingCSV = null;
+}
+
+/* ============================================================
+   IMPORT
+   ============================================================ */
+function doImport() {
+  if (!S.pendingCSV) return;
+  const { rows, headers, brandId, filename } = S.pendingCSV;
+  const di  = parseInt(document.getElementById('mapDate').value);
+  const pi  = parseInt(document.getElementById('mapProduct').value);
+  const si  = parseInt(document.getElementById('mapStatus').value);
+  const qv  = document.getElementById('mapQty').value;      const qi  = qv===''  ? null : parseInt(qv);
+  const uv  = document.getElementById('mapUsername').value;  const ui  = uv===''  ? null : parseInt(uv);
+  const prv = document.getElementById('mapPrice').value;     const pri = prv==='' ? null : parseInt(prv);
+  const idv = document.getElementById('mapProdId').value;    const idi = idv==='' ? null : parseInt(idv);
+
+  const checkedTags = [...document.querySelectorAll('#statusTags .status-tag.on')];
+  const appSet = new Set(checkedTags.map(el => el.textContent.trim().toLowerCase()));
+  S.approvedStatuses[brandId] = appSet;
+
+  const orders = rows.map(r => ({
+    date:      parseDate(r[di]||''),
+    product:   (r[pi]||'').trim(),
+    status:    (r[si]||'').trim(),
+    quantity:  qi!==null  ? (parseInt(r[qi])||1)   : 1,
+    username:  ui!==null  ? (r[ui]||'').trim()     : '',
+    price:     pri!==null ? (r[pri]||'').trim()    : '',
+    productId: idi!==null ? (r[idi]||'').trim()    : '',
+  })).filter(o => o.date && o.product);
+
+  if (!orders.length) { showToast('No valid rows found — check your date column', 'error'); return; }
+
+  DB.add(brandId, orders, { filename, date:new Date().toISOString(), rows:orders.length });
+  closeOverlay();
+  S.tab = 'report';
+  renderGrid(); renderPanel();
+  showToast(`✓ Imported ${orders.length.toLocaleString()} orders`, 'success');
+}
+
+/* ============================================================
+   PRODUCT MATCHING
+   ============================================================ */
+function matchProd(name, prods) {
+  if (!name) return null;
+  const low = name.toLowerCase();
+  let best=null, bestScore=0;
+  prods.forEach(p => {
+    if ((p.ex||[]).some(x => low.includes(x.toLowerCase()))) return;
+    let score = (p.kw||[]).filter(k => low.includes(k.toLowerCase())).length;
+    if (score > bestScore) { bestScore=score; best=p; }
+  });
+  return bestScore>=1 ? best : null;
+}
+
+/* ============================================================
+   EXPORT REPORT  —  dual-column TTS tracker format
+   ============================================================ */
+function exportReport() {
+  const b     = BRANDS.find(x=>x.id===S.brand);
+  const prods = PRODUCTS[S.brand]||[];
+  const appSet= S.approvedStatuses[S.brand]||new Set();
+  const tgts  = getTargets(S.brand);
+
+  // All orders sorted by date (export is always full dataset, not date-range filtered)
+  const allOrders = DB.orders(S.brand).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const allAp     = S.allApproved[S.brand] || false;
+  const approved  = allOrders.filter(o=>allAp ? true : (appSet.size===0?likelyApproved(o.status):appSet.has((o.status||'').toLowerCase())));
+
+  // ---- Build per-month groups (approved only) ----
+  const monthGroups = {};
+  approved.forEach(o => {
+    const mk = mkKey(o.date);
+    if (mk) { if (!monthGroups[mk]) monthGroups[mk]=[]; monthGroups[mk].push(o); }
+  });
+  // Add remaining months of the current year (with 0 orders)
+  const now = new Date();
+  for (let m=0; m<12; m++) {
+    const mk = mkKey(new Date(now.getFullYear(), m, 1).toISOString());
+    if (!monthGroups[mk]) monthGroups[mk]=[];
+  }
+  const sortedMonths = Object.keys(monthGroups).sort((a,b)=>mkNum(a)-mkNum(b));
+
+  // ---- RIGHT SIDE: summary tables ----
+  const R = [];
+  R.push(['SAMPLES  —  MONTHLY REPORTING','','','','']);
+
+  // Overall summary
+  const overall = summarize(approved, prods);
+  R.push(['OVERALL PRODUCT SUMMARY','','','','']);
+  R.push(['Product','Samples','$ Total Cost','Target','Status']);
+  overall.tracked.forEach(d => R.push([d.name, d.count, fmtMoney(d.cost), tgts[d.name]||'', goalStatus(d.count, tgts[d.name])]));
+  overall.other.forEach(d   => R.push([d.name, d.count, fmtMoney(d.cost), '', '']));
+  R.push(['TOTAL', overall.totalCount, fmtMoney(overall.totalCost), '', '']);
+  R.push(['','','','','']);
+
+  // Monthly sections
+  sortedMonths.forEach(mk => {
+    const mSummary = summarize(monthGroups[mk]||[], prods);
+    R.push([mk,'','','','']);
+    R.push(['Product','Samples','$ Cost','Target','Status']);
+    mSummary.tracked.forEach(d => R.push([d.name, d.count, fmtMoney(d.cost), tgts[d.name]||'', goalStatus(d.count, tgts[d.name])]));
+    mSummary.other.forEach(d   => R.push([d.name, d.count, fmtMoney(d.cost), '', '']));
+    R.push([`${mk}  —  Total`, mSummary.totalCount, fmtMoney(mSummary.totalCost), '', '']);
+    R.push(['','','','','']);
+  });
+
+  // ---- LEFT SIDE: raw order data ----
+  const L = [];
+  L.push([b.name.toUpperCase() + '  —  TTS SAMPLE TRACKER','','','','','']);
+  L.push(['Date','Username','Product','Product ID','Price','Free-Samples']);
+  allOrders.forEach(o => L.push([
+    fmtMDY(o.date),
+    o.username  || '',
+    o.product   || '',
+    o.productId || '',
+    o.price     ? fmtMoneyRaw(o.price) : '',
+    o.quantity  || 1,
+  ]));
+
+  // ---- ZIP left + right ----
+  const len = Math.max(L.length, R.length);
+  const csvRows = [];
+  for (let i=0; i<len; i++) {
+    const l = L[i] || ['','','','','',''];
+    const r = R[i] || ['','','','',''];
+    csvRows.push([...l, '', ...r]);
+  }
+
+  const csv = csvRows.map(row=>row.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `${b.name.replace(/[\s&]+/g,'-')}-TTS-Sample-Tracker-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+/* Aggregate approved orders into tracked + other product buckets */
+function summarize(orders, prods) {
+  const tracked = {};
+  prods.forEach(p => { tracked[p.short] = {name:p.short, count:0, cost:0}; });
+  const other = {};
+  orders.forEach(o => {
+    const m = matchProd(o.product, prods);
+    const c = parseCost(o.price);
+    if (m) { tracked[m.short].count++; tracked[m.short].cost+=c; }
+    else   { const k=o.product||'Unknown'; if(!other[k]) other[k]={name:k,count:0,cost:0}; other[k].count++; other[k].cost+=c; }
+  });
+  const trackedArr = prods.map(p=>tracked[p.short]);
+  const otherArr   = Object.values(other).sort((a,b)=>b.count-a.count);
+  const totalCount = trackedArr.reduce((s,d)=>s+d.count,0) + otherArr.reduce((s,d)=>s+d.count,0);
+  const totalCost  = trackedArr.reduce((s,d)=>s+d.cost, 0) + otherArr.reduce((s,d)=>s+d.cost, 0);
+  return { tracked:trackedArr, other:otherArr, totalCount, totalCost };
+}
+
+/* Targets: merge PRODUCTS config defaults with user overrides in localStorage */
+function getTargets(brandId) {
+  const stored = JSON.parse(localStorage.getItem('pst_targets_v1')||'{}')[brandId]||{};
+  const defaults = {};
+  (PRODUCTS[brandId]||[]).forEach(p => { if(p.target) defaults[p.short]=p.target; });
+  return {...defaults, ...stored};
+}
+
+function saveTargetUI(productShort, value) {
+  const stored = JSON.parse(localStorage.getItem('pst_targets_v1')||'{}');
+  if (!stored[S.brand]) stored[S.brand]={};
+  const n = parseInt(value);
+  if (n > 0) stored[S.brand][productShort] = n;
+  else delete stored[S.brand][productShort];
+  localStorage.setItem('pst_targets_v1', JSON.stringify(stored));
+}
+
+function goalStatus(count, target) {
+  if (!target) return '';
+  if (count >= target)        return '✅ Goal met!';
+  const diff = target - count;
+  if (count >= target * 0.9) return `⚠️ ${diff} sample${diff!==1?'s':''} to go!`;
+  return '';
+}
+
+function mkKey(isoDate) {
+  if (!isoDate) return '';
+  const d = new Date(isoDate);
+  return d.toLocaleString('en-US',{month:'long',year:'numeric'}).toUpperCase();
+}
+
+function mkNum(mk) {
+  const MO=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  const p=mk.split(' '); return (parseInt(p[1])||0)*12+MO.indexOf(p[0]);
+}
+
+function parseCost(s) { return parseFloat(String(s||'').replace(/[$,]/g,''))||0; }
+
+function fmtMoney(n) {
+  if (!n && n!==0) return '$0.00';
+  return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function fmtMoneyRaw(s) { return '$'+parseCost(s).toFixed(2); }
+
+function fmtMDY(iso) {
+  if (!iso) return '';
+  const d=new Date(iso);
+  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function likelyApproved(s='') {
+  const l=s.toLowerCase();
+  return ['approved','accept','completed','complete','shipped','fulfilled','confirmed','approved sample'].some(k=>l.includes(k));
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  let d = new Date(str);
+  if (!isNaN(d.getTime())) return d.toISOString();
+  const m1 = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m1) { d=new Date(m1[3],m1[1]-1,m1[2]); if(!isNaN(d.getTime())) return d.toISOString(); }
+  const m2 = str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);
+  if (m2) { d=new Date(m2[3],m2[2]-1,m2[1]); if(!isNaN(d.getTime())) return d.toISOString(); }
+  return null;
+}
+
+function fmtDate(d)     { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtDateTime(d) { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}); }
+
+function showToast(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(type?' '+type:'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
